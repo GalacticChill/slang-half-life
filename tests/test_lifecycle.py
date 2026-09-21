@@ -91,3 +91,10 @@ def test_measure_all_applies_size_and_edge_rules():
 def test_empty_series_is_an_error():
     with pytest.raises(ValueError):
         lc.measure(_series([np.nan, np.nan]))
+
+
+def test_measure_all_skips_pages_created_after_the_data():
+    idx = pd.period_range("2018-01", periods=6, freq="M")
+    prepared = pd.DataFrame({"old": [1, 5, 9, 5, 2, 1], "new": [np.nan] * 6}, index=idx, dtype=float)
+    out = lc.measure_all(prepared, prepared * 100)
+    assert list(out.index) == ["old"]

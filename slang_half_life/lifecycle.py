@@ -97,10 +97,13 @@ def measure_all(prepared: pd.DataFrame, raw: pd.DataFrame, window: int = SMOOTH_
 
     ``prepared`` is the normalized, creation-masked table from
     ``normalize.prepare``; ``raw`` holds the raw monthly counts, used only for
-    the minimum-size rule.
+    the minimum-size rule. Terms whose page was created after the last month of
+    data have nothing to measure and are left out.
     """
     rows = []
     for term in prepared.columns:
+        if prepared[term].notna().sum() == 0:
+            continue
         lc = measure(prepared[term], window)
         raw_peak = float(smooth(raw[term].where(prepared[term].notna()), window).max())
         rows.append({"term": term, **lc.__dict__, "peak_raw": raw_peak,
