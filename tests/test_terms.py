@@ -23,7 +23,7 @@ def test_era_boundaries():
 
 
 def _table(**overrides):
-    row = {"term": ["rizz"], "takeoff_year": [2022], "ambiguous": ["no"], "origin": ["x"]}
+    row = {"term": ["rizz"], "variants": [""], "takeoff_year": [2022], "ambiguous": ["no"], "origin": ["x"]}
     row.update(overrides)
     return pd.DataFrame(row)
 
@@ -47,11 +47,27 @@ def test_validate_rejects_duplicates():
         tm.validate(df)
 
 
+def test_variants_parsed_and_checked():
+    df = tm.load_terms().set_index("term", drop=False)
+    assert df.loc["gyatt", "variants"] == ["gyat"]
+    assert tm.titles_for(df.loc["yeet"]) == ["yeet", "yoit", "yait"]
+    assert tm.titles_for(df.loc["rizz"]) == ["rizz"]
+    assert tm.split_variants("") == []
+    assert tm.split_variants(" a ; b;") == ["a", "b"]
+
+
+def test_validate_rejects_variant_that_is_a_term():
+    df = pd.concat([_table(), _table(term=["gyatt"], variants=["rizz"])], ignore_index=True)
+    with pytest.raises(ValueError, match="also terms"):
+        tm.validate(df)
+
+
 def test_page_slug():
     assert tm.page_slug("rizz") == "rizz"
     assert tm.page_slug("OK boomer") == "OK_boomer"
     assert tm.page_slug("ate and left no crumbs") == "ate_and_left_no_crumbs"
     assert tm.page_slug("caught in 4K") == "caught_in_4K"
+    assert tm.page_slug("OK, boomer") == "OK%2C_boomer"
 
 
 def _page(title, content="==English==\n# a sense"):

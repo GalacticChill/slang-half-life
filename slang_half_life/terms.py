@@ -9,6 +9,12 @@ lookup counts, so no term was kept or dropped because of its curve:
 * **Has its own Wiktionary entry.** Redirects and "no entry" pages are left
   out. For a spelling variant (``gyat``), the main entry (``gyatt``) is used;
   otherwise the form people actually use (``stonks``, ``yapping``).
+* **Spelling variants are counted too.** Wiktionary gives variants their own
+  "alternative form" pages instead of redirects, so lookups get split across
+  spellings (``gyat`` / ``gyatt``). ``variants`` lists the extra titles
+  (separated by ``;``) whose views are added to the term. They were found by
+  searching each entry's alternative forms, then hand-checked so only
+  spellings of the *slang* sense are kept (``karen`` yes, ``Karin`` no).
 * **Flagged as ambiguous** when the page also covers a common non-slang
   meaning (``cap``, ``lit``, ``sigma``). Those lookups mix both meanings, so
   the robustness check reruns the analysis without them.
@@ -43,22 +49,41 @@ def era_of(year: int) -> str:
 
 def load_terms(path: str | Path = DEFAULT_TERMS) -> pd.DataFrame:
     """Load and validate the term list, adding a boolean ``ambiguous`` and an ``era``."""
-    df = pd.read_csv(path, dtype={"term": str})
+    df = pd.read_csv(path, dtype={"term": str, "variants": str}, keep_default_na=False)
+    df["takeoff_year"] = pd.to_numeric(df["takeoff_year"])
     validate(df)
     df["ambiguous"] = df["ambiguous"].eq("yes")
+    df["variants"] = df["variants"].map(split_variants)
     df["era"] = df["takeoff_year"].map(era_of)
     return df
 
 
+def split_variants(cell) -> list[str]:
+    """Parse a ``;``-separated variants cell into a list of titles."""
+    if not isinstance(cell, str):
+        return []
+    return [v.strip() for v in cell.split(";") if v.strip()]
+
+
+def titles_for(row) -> list[str]:
+    """Every Wiktionary title whose lookups count toward a term: main entry first."""
+    return [row["term"], *row["variants"]]
+
+
 def validate(df: pd.DataFrame) -> None:
     """Raise ValueError if the term table breaks any of the list's rules."""
-    required = {"term", "takeoff_year", "ambiguous", "origin"}
+    required = {"term", "variants", "takeoff_year", "ambiguous", "origin"}
     if missing := required - set(df.columns):
         raise ValueError(f"missing columns: {sorted(missing)}")
     if df["term"].isna().any() or (df["term"].str.strip() != df["term"]).any():
         raise ValueError("terms must be non-empty with no surrounding whitespace")
     if dupes := sorted(df.loc[df["term"].duplicated(), "term"]):
         raise ValueError(f"duplicate terms: {dupes}")
+    variants = [v for cell in df["variants"] for v in split_variants(cell)]
+    if clash := sorted(set(variants) & set(df["term"])):
+        raise ValueError(f"variants that are also terms: {clash}")
+    if len(variants) != len(set(variants)):
+        raise ValueError("a variant is listed more than once")
     if not df["ambiguous"].isin(["yes", "no"]).all():
         raise ValueError("ambiguous must be 'yes' or 'no'")
     years = df["takeoff_year"]

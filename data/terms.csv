@@ -1,78 +1,78 @@
-term,takeoff_year,ambiguous,origin
-yeet,2017,no,Vine dance video; exclamation for throwing something
-boujee,2017,no,"Migos, ""Bad and Boujee"""
-lowkey,2016,no,Black American slang; quietly or secretly
-highkey,2017,no,Opposite of lowkey; openly
-thicc,2017,no,Meme respelling of thick
-doggo,2016,no,DoggoLingo meme pages
-pupper,2016,no,DoggoLingo meme pages
-big mood,2018,no,Twitter; very relatable
-stan,2018,no,"Eminem, ""Stan""; to be an obsessive fan"
-chonk,2018,no,Fat-cat memes
-shook,2017,yes,Shocked; also the past tense of shake
-snatched,2016,yes,Looking great; also the past tense of snatch
-savage,2017,yes,Brutally bold; also the standard adjective
-extra,2016,yes,Over the top; also the standard word
-lit,2016,yes,Exciting; also the past tense of light
-woke,2016,yes,Socially aware; also the past tense of wake
-NPC,2018,yes,Non-player character meme; also the gaming term
-OK boomer,2019,no,TikTok retort to older generations
-and I oop,2019,no,Jasmine Masters clip; VSCO-girl TikTok
-sksksk,2019,no,Keyboard-smash laugh; VSCO-girl TikTok
-VSCO girl,2019,no,TikTok aesthetic stereotype
-vibe check,2019,no,Twitter and TikTok meme
-periodt,2019,no,Emphatic period; Black American slang
-simp,2020,no,TikTok; overly devoted to someone
-stonks,2019,no,Meme Man stock-market meme
-poggers,2020,no,Twitch emote
-no cap,2020,no,Hip-hop; no lie
-cap,2020,yes,A lie; also the standard noun
-bussin,2020,no,Black American slang; really good (usually food)
-sus,2020,yes,Among Us; suspicious (page also has Latin 'pig')
-doomscrolling,2020,no,Pandemic-era news scrolling
-hits different,2020,no,TikTok; feels uniquely good
-main character,2020,yes,TikTok 'main character energy'; also literal
-rent free,2020,yes,Living in someone's head; also literal
-iykyk,2020,no,If you know you know
-Karen,2020,yes,Entitled-customer meme; also a given name
-cheugy,2021,no,TikTok; trying too hard in a dated way
-understood the assignment,2021,no,Twitter and TikTok praise
-caught in 4K,2021,no,Caught red-handed on camera
-ratio,2021,yes,Twitter reply-count dunk; also the maths term
-mid,2021,yes,Mediocre; also the standard prefix and noun
-touch grass,2021,no,Go outside; log off
-goated,2021,no,From GOAT; the greatest
-ick,2021,yes,Sudden turn-off; also an older interjection
-sheesh,2021,yes,TikTok drawn-out exclamation; older interjection
-gatekeep,2021,yes,'Gaslight gatekeep girlboss' meme; also older sense
-pick me,2021,no,Someone seeking approval by putting others down
-sneaky link,2021,no,TikTok; secret hookup
-gigachad,2021,no,Meme of an idealized man
-based,2021,yes,Lil B then politics Twitter; also past tense of base
-yassify,2021,no,Beauty-filter meme
-bet,2020,yes,Agreement ('okay'); also the standard verb
-unalive,2022,no,TikTok euphemism to avoid moderation
-situationship,2022,no,Undefined relationship
-ate and left no crumbs,2022,no,Did something perfectly
-slay,2022,yes,Do something excellently; also the standard verb
-rizz,2022,no,Kai Cenat; charisma. Oxford Word of the Year 2023
-ong,2022,no,On God; I swear
-gyatt,2023,no,Streamer exclamation
-delulu,2023,no,K-pop fandom; delusional
-skibidi,2023,no,Skibidi Toilet YouTube series
-looksmaxxing,2023,no,Online self-improvement forums
-mewing,2024,no,Jawline-exercise trend
-pookie,2023,no,Affectionate nickname
-big back,2023,no,TikTok; someone who overeats
-yapping,2023,yes,Talking too much; also a dog's bark
-brain rot,2024,yes,Oxford Word of the Year 2024; older literal sense
-demure,2024,yes,Jools Lebron 'very demure' TikTok; also the standard adjective
-crash out,2024,no,Lose control; act recklessly
-glazing,2024,yes,Over-praising; also windows and ceramics
-unc,2024,no,Uncle; someone acting old
-huzz,2024,no,Streamer slang for attractive people
-aura farming,2025,no,Anime-edit trend of cultivating cool
-chopped,2025,yes,Unattractive; also the past tense of chop
-clanker,2025,no,Star Wars slur repurposed against AI and robots
-sigma,2023,yes,Lone-wolf male meme; also the Greek letter
-zesty,2023,yes,Flamboyant; also the standard adjective
+term,variants,takeoff_year,ambiguous,origin
+yeet,yoit,2017,no,Vine dance video; exclamation for throwing something
+boujee,,2017,no,"Migos, ""Bad and Boujee"""
+lowkey,,2016,no,Black American slang; quietly or secretly
+highkey,,2017,no,Opposite of lowkey; openly
+thicc,thic,2017,no,Meme respelling of thick
+doggo,,2016,no,DoggoLingo meme pages
+pupper,,2016,no,DoggoLingo meme pages
+big mood,,2018,no,Twitter; very relatable
+stan,,2018,no,"Eminem, ""Stan""; to be an obsessive fan"
+chonk,,2018,no,Fat-cat memes
+shook,,2017,yes,Shocked; also the past tense of shake
+snatched,,2016,yes,Looking great; also the past tense of snatch
+savage,,2017,yes,Brutally bold; also the standard adjective
+extra,,2016,yes,Over the top; also the standard word
+lit,,2016,yes,Exciting; also the past tense of light
+woke,,2016,yes,Socially aware; also the past tense of wake
+NPC,,2018,yes,Non-player character meme; also the gaming term
+OK boomer,"OK, boomer",2019,no,TikTok retort to older generations
+and I oop,,2019,no,Jasmine Masters clip; VSCO-girl TikTok
+sksksk,sksksksk,2019,no,Keyboard-smash laugh; VSCO-girl TikTok
+VSCO girl,,2019,no,TikTok aesthetic stereotype
+vibe check,,2019,no,Twitter and TikTok meme
+periodt,,2019,no,Emphatic period; Black American slang
+simp,,2020,no,TikTok; overly devoted to someone
+stonks,,2019,no,Meme Man stock-market meme
+poggers,,2020,no,Twitch emote
+no cap,,2020,no,Hip-hop; no lie
+cap,🧢,2020,yes,A lie; also the standard noun
+bussin,,2020,no,Black American slang; really good (usually food)
+sus,,2020,yes,Among Us; suspicious (page also has Latin 'pig')
+doomscrolling,doom-scrolling;doom scrolling,2020,no,Pandemic-era news scrolling
+hits different,,2020,no,TikTok; feels uniquely good
+main character,,2020,yes,TikTok 'main character energy'; also literal
+rent free,,2020,yes,Living in someone's head; also literal
+iykyk,,2020,no,If you know you know
+Karen,karen,2020,yes,Entitled-customer meme; also a given name
+cheugy,,2021,no,TikTok; trying too hard in a dated way
+understood the assignment,,2021,no,Twitter and TikTok praise
+caught in 4K,,2021,no,Caught red-handed on camera
+ratio,,2021,yes,Twitter reply-count dunk; also the maths term
+mid,myd,2021,yes,Mediocre; also the standard prefix and noun
+touch grass,touch some grass,2021,no,Go outside; log off
+goated,GOATed;GOATED;G.O.A.T.ED,2021,no,From GOAT; the greatest
+ick,,2021,yes,Sudden turn-off; also an older interjection
+sheesh,,2021,yes,TikTok drawn-out exclamation; older interjection
+gatekeep,gate-keep,2021,yes,'Gaslight gatekeep girlboss' meme; also older sense
+pick me,,2021,no,Someone seeking approval by putting others down
+sneaky link,,2021,no,TikTok; secret hookup
+gigachad,Gigachad;GigaChad,2021,no,Meme of an idealized man
+based,,2021,yes,Lil B then politics Twitter; also past tense of base
+yassify,,2021,no,Beauty-filter meme
+bet,,2020,yes,Agreement ('okay'); also the standard verb
+unalive,,2022,no,TikTok euphemism to avoid moderation
+situationship,,2022,no,Undefined relationship
+ate and left no crumbs,,2022,no,Did something perfectly
+slay,,2022,yes,Do something excellently; also the standard verb
+rizz,,2022,no,Kai Cenat; charisma. Oxford Word of the Year 2023
+ong,,2022,no,On God; I swear
+gyatt,gyat,2023,no,Streamer exclamation
+delulu,,2023,no,K-pop fandom; delusional
+skibidi,,2023,no,Skibidi Toilet YouTube series
+looksmaxxing,,2023,no,Online self-improvement forums
+mewing,,2024,no,Jawline-exercise trend
+pookie,,2023,no,Affectionate nickname
+big back,bigback,2023,no,TikTok; someone who overeats
+yapping,,2023,yes,Talking too much; also a dog's bark
+brain rot,brain-rot;brainrot,2024,yes,Oxford Word of the Year 2024; older literal sense
+demure,,2024,yes,Jools Lebron 'very demure' TikTok; also the standard adjective
+crash out,crashout,2024,no,Lose control; act recklessly
+glazing,,2024,yes,Over-praising; also windows and ceramics
+unc,,2024,no,Uncle; someone acting old
+huzz,,2024,no,Streamer slang for attractive people
+aura farming,aurafarming,2025,no,Anime-edit trend of cultivating cool
+chopped,,2025,yes,Unattractive; also the past tense of chop
+clanker,clanka,2025,no,Star Wars slur repurposed against AI and robots
+sigma,,2023,yes,Lone-wolf male meme; also the Greek letter
+zesty,,2023,yes,Flamboyant; also the standard adjective
