@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slang Half-Life</title>
+<meta name="description" content="How long does a slang term live? The rise, peak and fade of 77 slang terms, measured from Wiktionary lookups.">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #6f6e69;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11, 11, 11, 0.10);
+    --series: #2a78d6;
+    --series-soft: rgba(42, 120, 214, 0.35);
+    --series-fill: rgba(42, 120, 214, 0.10);
+    --accent-2: #eb6834;
+    --good: #006300;
+    --chip: #f0efec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface: #1a1a19;
+      --ink: #ffffff;
+      --ink-2: #c3c2b7;
+      --muted: #9a9993;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255, 255, 255, 0.10);
+      --series: #3987e5;
+      --series-soft: rgba(57, 135, 229, 0.45);
+      --series-fill: rgba(57, 135, 229, 0.14);
+      --accent-2: #d95926;
+      --good: #0ca30c;
+      --chip: #262624;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 48px; }
+  header h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--ink-2); }
+  .meta { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  h2 { font-size: 18px; margin: 0 0 12px; }
+  label.search { display: block; font-weight: 600; margin-bottom: 6px; }
+  .search-row { display: flex; gap: 8px; }
+  input[type="search"] {
+    flex: 1; min-width: 0;
+    font: inherit; color: var(--ink);
+    background: var(--page);
+    border: 1px solid var(--axis);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  input[type="search"]:focus-visible, button:focus-visible, .chart:focus-visible, summary:focus-visible, a:focus-visible {
+    outline: 2px solid var(--series); outline-offset: 2px;
+  }
+  .picks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill {
+    font: inherit; font-size: 14px; color: var(--ink);
+    background: var(--chip); border: 1px solid transparent; border-radius: 999px;
+    padding: 4px 12px; cursor: pointer;
+  }
+  .pill:hover { border-color: var(--axis); }
+  .pill[aria-pressed="true"] { border-color: var(--series); }
+  .msg { color: var(--ink-2); font-size: 14px; margin: 8px 0 0; min-height: 1.5em; }
+  .term-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+  .term-head h2 { font-size: 26px; margin: 0; }
+  .badge {
+    font-size: 12px; font-weight: 600; color: var(--ink-2);
+    border: 1px solid var(--axis); border-radius: 999px; padding: 1px 9px;
+  }
+  .origin { color: var(--ink-2); margin: 4px 0 0; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 8px; }
+  .stat { border-top: 2px solid var(--grid); padding-top: 8px; }
+  .stat .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat .v { font-size: 20px; font-weight: 650; line-height: 1.25; }
+  .stat .s { font-size: 13px; color: var(--ink-2); }
+  .chart-box { position: relative; margin-top: 8px; }
+  .chart { display: block; width: 100%; height: auto; touch-action: pan-y; }
+  .chart text { fill: var(--muted); font-size: 11px; }
+  .chart .lbl { fill: var(--ink-2); font-size: 12px; }
+  .tip {
+    position: absolute; pointer-events: none; z-index: 2;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 8px 10px; font-size: 13px; line-height: 1.35; white-space: nowrap;
+  }
+  .tip strong { font-size: 15px; }
+  .tip .row { display: flex; align-items: center; gap: 6px; }
+  .tip .key { width: 12px; height: 2px; background: var(--series); flex: none; }
+  .tip .muted { color: var(--ink-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+  .legend span::before {
+    content: ""; display: inline-block; width: 14px; height: 0; vertical-align: middle; margin-right: 6px;
+    border-top: 2.5px solid var(--series);
+  }
+  .legend .raw::before { border-top: 1.5px solid var(--series-soft); }
+  .legend .half::before { border-top: 1.5px dashed var(--muted); }
+  details { margin-top: 12px; font-size: 14px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  .table-scroll { max-height: 280px; overflow: auto; margin-top: 8px; border: 1px solid var(--border); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--grid); }
+  th:first-child, td:first-child { text-align: left; }
+  th { position: sticky; top: 0; background: var(--surface); color: var(--ink-2); font-weight: 600; }
+  .rising { list-style: none; margin: 0; padding: 0; }
+  .rising li { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--grid); }
+  .rising li:last-child { border-bottom: 0; }
+  .rising button {
+    font: inherit; font-weight: 600; color: var(--series); background: none; border: 0; padding: 0; cursor: pointer;
+    text-align: left; flex: 1;
+  }
+  .rising .g { font-weight: 650; font-variant-numeric: tabular-nums; }
+  .rising .n { color: var(--muted); font-size: 13px; min-width: 7.5em; text-align: right; }
+  .note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  .findings { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+  .finding h3 { font-size: 15px; margin: 0 0 4px; }
+  .finding .big { font-size: 24px; font-weight: 700; line-height: 1.2; margin: 4px 0; }
+  .finding p { margin: 0; font-size: 14px; color: var(--ink-2); }
+  .finding ul { margin: 6px 0 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+  footer { margin-top: 28px; font-size: 13px; color: var(--muted); }
+  footer a, .card a { color: var(--series); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .findings { grid-template-columns: 1fr; }
+    .card { padding: 16px; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Slang Half-Life</h1>
+    <p>How long does a slang term live? The rise, peak and fade of 77 slang terms, measured from Wiktionary lookups.</p>
+    <div class="meta" id="meta">Loading data…</div>
+  </header>
+
+  <section class="card" aria-labelledby="search-label">
+    <label class="search" id="search-label" for="q">Look up a term</label>
+    <div class="search-row">
+      <input type="search" id="q" list="term-list" placeholder="Try rizz, delulu, yeet…" autocomplete="off" spellcheck="false">
+      <datalist id="term-list"></datalist>
+    </div>
+    <div class="picks" id="picks" aria-label="Quick picks"></div>
+    <p class="msg" id="msg" role="status"></p>
+  </section>
+
+  <section class="card" id="term-card" aria-live="polite" hidden>
+    <div class="term-head">
+      <h2 id="t-name"></h2>
+      <div id="t-badges"></div>
+    </div>
+    <p class="origin" id="t-origin"></p>
+    <div class="stats" id="t-stats"></div>
+    <div class="chart-box" id="chart-box">
+      <svg class="chart" id="chart" role="img" tabindex="0"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="legend">
+      <span>3-month average</span><span class="raw">each month</span><span class="half">half of peak</span>
+    </div>
+    <p class="note">Lookups per million Wiktionary pageviews, so the site getting busier over the years doesn't look like a word getting popular. Hover or use the arrow keys for monthly numbers.</p>
+    <details>
+      <summary>Show the numbers</summary>
+      <div class="table-scroll"><table id="t-table"></table></div>
+    </details>
+  </section>
+
+  <section class="card" aria-labelledby="rising-h">
+    <h2 id="rising-h">Rising now</h2>
+    <ul class="rising" id="rising"></ul>
+    <p class="note" id="rising-note"></p>
+  </section>
+
+  <section class="card" aria-labelledby="findings-h">
+    <h2 id="findings-h">What the data shows</h2>
+    <div class="findings" id="findings"></div>
+    <p class="note">Full method, charts and caveats: <a href="https://github.com/GalacticChill/slang-half-life">github.com/GalacticChill/slang-half-life</a></p>
+  </section>
+
+  <footer>
+    <p>Lookups come from the Wikimedia pageview API (human traffic only, short bursts filtered, spelling variants merged); definition dates from Urban Dictionary. Lookups aren't the same as usage: people look up words they don't know. Updated weekly.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const fmtMonth = (ym) => { const [y, m] = ym.split("-"); return `${MONTHS[+m - 1]} ${y}`; };
+  const fmtInt = (n) => Math.round(n).toLocaleString("en-US");
+  const fmtNum = (n) => n >= 100 ? fmtInt(n) : n >= 10 ? n.toFixed(1) : n.toFixed(2);
+  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  const el = (tag, attrs = {}, text) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text !== undefined) e.textContent = text;
+    return e;
+  };
+  const SVG = "http://www.w3.org/2000/svg";
+  const svgEl = (tag, attrs = {}) => {
+    const e = document.createElementNS(SVG, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    return e;
+  };
+
+  let DATA = null;
+  let byKey = new Map();
+  let current = null;
+  let hoverIndex = null;
+
+  function smooth(values) {
+    return values.map((_, i) => {
+      const w = values.slice(Math.max(0, i - 1), i + 2);
+      return w.reduce((a, b) => a + b, 0) / w.length;
+    });
+  }
+
+  // A round tick step (1, 2, 2.5 or 5 times a power of ten) giving about four gridlines.
+  function niceStep(max) {
+    if (max <= 0) return 1;
+    const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw)));
+    for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= raw) return m * p;
+    return 10 * p;
+  }
+
+  function stat(key, value, sub) {
+    const d = el("div", { class: "stat" });
+    d.append(el("div", { class: "k" }, key), el("div", { class: "v" }, value));
+    if (sub) d.append(el("div", { class: "s" }, sub));
+    return d;
+  }
+
+  function showTerm(term, { focus = false } = {}) {
+    const t = byKey.get(term.toLowerCase());
+    if (!t) {
+      $("msg").textContent = `No term called “${term}” in this study. It covers ${DATA.terms.length} terms.`;
+      return;
+    }
+    current = t;
+    $("msg").textContent = "";
+    $("q").value = t.term;
+    for (const b of $("picks").children) b.setAttribute("aria-pressed", String(b.textContent === t.term));
+    history.replaceState(null, "", `#${encodeURIComponent(t.term)}`);
+
+    $("t-name").textContent = t.term;
+    const badges = $("t-badges");
+    badges.replaceChildren();
+    if (t.shape) badges.append(el("span", { class: "badge" }, t.shape));
+    if (t.still_alive && t.measured) badges.append(el("span", { class: "badge" }, "still above half its peak"));
+    if (t.ambiguous) badges.append(el("span", { class: "badge", title: "The page also covers a common non-slang meaning" }, "ambiguous word"));
+    const variants = t.variants.length ? ` Also counts: ${t.variants.join(", ")}.` : "";
+    $("t-origin").textContent = `${t.origin}. Took off around ${t.takeoff_year}.${variants}`;
+
+    const stats = $("t-stats");
+    stats.replaceChildren();
+    stats.append(stat("Peak", fmtMonth(t.peak_month), "3-month average"));
+    if (!t.measured) {
+      const why = !t.big_enough ? "Too few lookups to measure reliably" : "Peaked before its data began";
+      stats.append(stat("Half-life", "Not measured", why));
+    } else if (t.half_life !== null) {
+      stats.append(stat("Half-life", plural(t.half_life, "month"), "to fall below half its peak"));
+    } else {
+      stats.append(stat("Half-life", `${plural(t.followup, "month")}+`, "still above half its peak"));
+    }
+    const trend = t.still_alive && t.measured ? "still going"
+      : t.stickiness >= 0.4 ? "has stuck around" : t.stickiness < 0.1 ? "has faded" : "fading";
+    stats.append(stat("Last 12 months", `${Math.round(t.stickiness * 100)}% of peak`, trend));
+    if (t.ud_lead === null) stats.append(stat("Urban Dictionary", "—", "too few definitions"));
+    else if (t.ud_lead === 0) stats.append(stat("Urban Dictionary", "Same month", "definitions and lookups peaked together"));
+    else stats.append(stat("Urban Dictionary", plural(Math.abs(t.ud_lead), "month"), t.ud_lead > 0 ? "peaked earlier than lookups" : "peaked later than lookups"));
+
+    const table = $("t-table");
+    table.replaceChildren();
+    const head = el("tr");
+    head.append(el("th", {}, "Month"), el("th", {}, "Lookups"), el("th", {}, "Per million"));
+    table.append(head);
+    t.views.forEach((v, i) => {
+      const tr = el("tr");
+      tr.append(el("td", {}, fmtMonth(DATA.months[t.start + i])), el("td", {}, fmtInt(v)), el("td", {}, fmtNum(t.adjusted[i])));
+      table.append(tr);
+    });
+
+    $("term-card").hidden = false;
+    hoverIndex = null;
+    drawChart();
+    if (focus) $("term-card").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function drawChart() {
+    const t = current;
+    if (!t) return;
+    const svg = $("chart");
+    const W = Math.max(280, $("chart-box").clientWidth);
+    const H = W < 500 ? 220 : 280;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.replaceChildren();
+    const m = { l: 44, r: 12, t: 14, b: 26 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const vals = t.adjusted, sm = smooth(vals), n = vals.length;
+    const yStep = niceStep(Math.max(...vals) * 1.05);
+    const ticks = Math.max(1, Math.ceil((Math.max(...vals) * 1.05) / yStep));
+    const yMax = yStep * ticks;
+    const x = (i) => m.l + (n === 1 ? iw / 2 : (i / (n - 1)) * iw);
+    const y = (v) => m.t + ih - (v / yMax) * ih;
+
+    for (let k = 0; k <= ticks; k++) {
+      const v = yStep * k, yy = y(v);
+      svg.append(svgEl("line", { x1: m.l, x2: W - m.r, y1: yy, y2: yy, stroke: k ? "var(--grid)" : "var(--axis)", "stroke-width": 1 }));
+      const lab = svgEl("text", { x: m.l - 6, y: yy + 4, "text-anchor": "end" });
+      lab.textContent = v >= 1000 ? `${+(v / 1000).toFixed(1)}k` : `${+v.toFixed(v < 10 ? 1 : 0)}`;
+      svg.append(lab);
+    }
+    const years = [];
+    for (let i = 0; i < n; i++) if (DATA.months[t.start + i].endsWith("-01")) years.push(i);
+    const step = Math.ceil(years.length / Math.max(2, Math.floor(iw / 56)));
+    years.forEach((i, k) => {
+      if (k % step) return;
+      const lab = svgEl("text", { x: x(i), y: H - 6, "text-anchor": "middle" });
+      lab.textContent = DATA.months[t.start + i].slice(0, 4);
+      svg.append(lab);
+    });
+
+    const line = (arr) => arr.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+    svg.append(svgEl("path", { d: `${line(sm)}L${x(n - 1)},${y(0)}L${x(0)},${y(0)}Z`, fill: "var(--series-fill)" }));
+    svg.append(svgEl("path", { d: line(vals), fill: "none", stroke: "var(--series-soft)", "stroke-width": 1.5 }));
+    svg.append(svgEl("path", { d: line(sm), fill: "none", stroke: "var(--series)", "stroke-width": 2.5, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+    const pi = DATA.months.indexOf(t.peak_month) - t.start;
+    if (pi >= 0 && pi < n) {
+      const half = sm[pi] / 2;
+      svg.append(svgEl("line", { x1: m.l, x2: W - m.r, y1: y(half), y2: y(half), stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "4 3" }));
+      const dot = (i, text, anchorRight) => {
+        svg.append(svgEl("circle", { cx: x(i), cy: y(sm[i]), r: 5, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2 }));
+        const right = anchorRight ?? x(i) > m.l + iw * 0.7;
+        const lab = svgEl("text", { class: "lbl", x: x(i) + (right ? -9 : 9), y: y(sm[i]) + (text === "peak" ? 4 : -8), "text-anchor": right ? "end" : "start" });
+        lab.textContent = text;
+        svg.append(lab);
+      };
+      dot(pi, "peak");
+      if (t.half_life !== null && pi + t.half_life < n) dot(pi + t.half_life, `half-life ${plural(t.half_life, "month")}`);
+    }
+
+    const cross = svgEl("line", { y1: m.t, y2: m.t + ih, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden" });
+    const hdot = svgEl("circle", { r: 4.5, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden" });
+    svg.append(cross, hdot);
+    const hit = svgEl("rect", { x: m.l, y: 0, width: iw, height: H, fill: "transparent" });
+    svg.append(hit);
+
+    const tip = $("tip");
+    const show = (i) => {
+      hoverIndex = i;
+      const cx = x(i);
+      cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+      hdot.setAttribute("cx", cx); hdot.setAttribute("cy", y(sm[i])); hdot.setAttribute("visibility", "visible");
+      tip.replaceChildren();
+      const r1 = el("div", { class: "row" });
+      r1.append(el("span", { class: "key" }), el("strong", {}, fmtInt(t.views[i])), el("span", { class: "muted" }, "lookups"));
+      const r2 = el("div", { class: "muted" }, `${fmtNum(vals[i])} per million · 3-mo avg ${fmtNum(sm[i])}`);
+      tip.append(el("div", {}, fmtMonth(DATA.months[t.start + i])), r1, r2);
+      tip.hidden = false;
+      const scale = $("chart-box").clientWidth / W;
+      const px = cx * scale, bw = $("chart-box").clientWidth, tw = tip.offsetWidth;
+      tip.style.left = `${Math.min(Math.max(0, px + 12 + tw > bw ? px - tw - 12 : px + 12), bw - tw)}px`;
+      tip.style.top = `${Math.max(0, y(sm[i]) * scale - tip.offsetHeight - 10)}px`;
+    };
+    const hide = () => {
+      hoverIndex = null;
+      cross.setAttribute("visibility", "hidden"); hdot.setAttribute("visibility", "hidden"); tip.hidden = true;
+    };
+    const indexAt = (evt) => {
+      const r = svg.getBoundingClientRect();
+      const px = ((evt.clientX - r.left) / r.width) * W;
+      return Math.min(n - 1, Math.max(0, Math.round(((px - m.l) / iw) * (n - 1))));
+    };
+    svg.onpointermove = (e) => show(indexAt(e));
+    svg.onpointerdown = (e) => show(indexAt(e));
+    svg.onpointerleave = hide;
+    svg.onblur = hide;
+    svg.onkeydown = (e) => {
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        const base = hoverIndex ?? (e.key === "ArrowLeft" ? n : -1);
+        show(Math.min(n - 1, Math.max(0, base + (e.key === "ArrowRight" ? 1 : -1))));
+      } else if (e.key === "Escape") hide();
+    };
+    const peakText = t.half_life !== null ? `, halved ${plural(t.half_life, "month")} later` : "";
+    svg.setAttribute("aria-label", `Monthly lookups of ${t.term} from ${fmtMonth(DATA.months[t.start])} to ${fmtMonth(DATA.last_month)}. Peak ${fmtMonth(t.peak_month)}${peakText}. Use arrow keys for monthly values.`);
+  }
+
+  function renderRising() {
+    const ul = $("rising");
+    ul.replaceChildren();
+    if (!DATA.rising.length) {
+      ul.append(el("li", {}, "No term in the study is growing right now."));
+    }
+    for (const r of DATA.rising) {
+      const li = el("li");
+      const b = el("button", { type: "button" }, r.term);
+      b.onclick = () => showTerm(r.term, { focus: true });
+      li.append(b, el("span", { class: "g" }, `+${Math.round((r.growth - 1) * 100)}%`), el("span", { class: "n" }, `${fmtInt(r.recent_views)} a month`));
+      ul.append(li);
+    }
+    const last = fmtMonth(DATA.last_month);
+    $("rising-note").textContent = `Growth in lookups over the last 3 months (through ${last}) against the 3 months before, adjusted for site traffic. Only terms averaging at least 100 lookups a month count. The newest month can still be revised upward.`;
+  }
+
+  function renderFindings() {
+    const h = DATA.headline;
+    const box = $("findings");
+    box.replaceChildren();
+
+    const f1 = el("div", { class: "finding" });
+    const eras = h.eras.eras;
+    f1.append(el("h3", {}, "Is slang dying faster?"), el("div", { class: "big" }, "Not provably"));
+    f1.append(el("p", {}, `Median half-life by the era a term peaked: ${eras.map((e) => `${e.era} ${e.median_half_life ?? "—"} mo`).join(", ")}. Older terms lasted longer in every version of the analysis, but the difference isn't significant (p = ${h.eras.p_value.toFixed(2)}).`));
+
+    const f2 = el("div", { class: "finding" });
+    f2.append(el("h3", {}, "Three ways a term lives"));
+    const ul = el("ul");
+    const last = h.shape_months.length - 1;
+    for (const name of ["flash in the pan", "slow burn", "stuck around"]) {
+      const s = h.shapes[name];
+      ul.append(el("li", {}, `${name[0].toUpperCase() + name.slice(1)} (${s.terms}): ${Math.round(s.curve[last] * 100)}% of peak two years on`));
+    }
+    f2.append(ul);
+
+    const f3 = el("div", { class: "finding" });
+    f3.append(el("h3", {}, "Insiders first"), el("div", { class: "big" }, `${h.lag.median_lead} months`));
+    f3.append(el("p", {}, `The typical head start of Urban Dictionary over Wiktionary. Definitions peaked before lookups for ${h.lag.ud_first} of ${h.lag.ud_first + h.lag.wiktionary_first} non-ambiguous terms, the strongest result in the study.`));
+    box.append(f1, f2, f3);
+  }
+
+  function init(data) {
+    DATA = data;
+    byKey = new Map(data.terms.map((t) => [t.term.toLowerCase(), t]));
+    const [gy, gm, gd] = data.generated.split("-");
+    $("meta").textContent = `${data.terms.length} terms · data ${fmtMonth(data.first_month)} to ${fmtMonth(data.last_month)} · updated ${MONTHS[+gm - 1]}\u00a0${+gd},\u00a0${gy}`;
+    const list = $("term-list");
+    for (const t of data.terms) list.append(el("option", { value: t.term }));
+    for (const name of ["rizz", "skibidi", "yeet", "delulu", "doggo", "situationship"]) {
+      if (!byKey.has(name)) continue;
+      const b = el("button", { type: "button", class: "pill", "aria-pressed": "false" }, name);
+      b.onclick = () => showTerm(name);
+      $("picks").append(b);
+    }
+    const q = $("q");
+    q.addEventListener("change", () => q.value.trim() && showTerm(q.value.trim()));
+    q.addEventListener("keydown", (e) => { if (e.key === "Enter" && q.value.trim()) showTerm(q.value.trim()); });
+    q.addEventListener("input", () => { if (byKey.has(q.value.trim().toLowerCase())) showTerm(q.value.trim()); });
+    renderRising();
+    renderFindings();
+    const fromHash = decodeURIComponent(location.hash.slice(1));
+    showTerm(byKey.has(fromHash.toLowerCase()) ? fromHash : "rizz");
+    let pending = 0;
+    window.addEventListener("resize", () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(drawChart); });
+    window.addEventListener("hashchange", () => {
+      const h = decodeURIComponent(location.hash.slice(1));
+      if (h && byKey.has(h.toLowerCase()) && h.toLowerCase() !== current?.term.toLowerCase()) showTerm(h);
+    });
+  }
+
+  fetch("latest.json", { cache: "no-cache" })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(init)
+    .catch(() => { $("meta").textContent = "Couldn't load the data. Check your connection and reload."; });
+})();
+</script>
+</body>
+</html>

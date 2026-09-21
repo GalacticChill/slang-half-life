@@ -30,6 +30,8 @@ def _parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--no-sample", action="store_true", help="Skip the random-sample check.")
     p.add_argument("--no-plots", action="store_true", help="Don't redraw the charts.")
     p.add_argument("--assets-dir", default=str(DEFAULT_ASSETS), help="Where to write charts.")
+    p.add_argument("--export-site", action="store_true",
+                   help="Also write the dashboard's data file, docs/latest.json.")
     return p.parse_args(argv)
 
 
@@ -68,6 +70,10 @@ def main(argv=None) -> None:
     if not args.no_plots:
         paths = report.draw(res, Path(args.assets_dir))
         print(f"\nCharts written to {Path(args.assets_dir)}/: " + ", ".join(p.name for p in paths))
+    if args.export_site:
+        from . import export
+
+        print(f"Dashboard data written to {export.write(res)}")
 
 
 if __name__ == "__main__":
