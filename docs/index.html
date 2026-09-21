@@ -64,6 +64,11 @@
   header h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; letter-spacing: -0.01em; }
   header p { margin: 0; color: var(--ink-2); }
   .meta { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .offline {
+    display: inline-block; margin: 10px 0 0; font-size: 13px; color: var(--ink);
+    background: var(--chip); border: 1px solid var(--axis); border-radius: 8px; padding: 4px 10px;
+  }
+  .offline[hidden] { display: none; }
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -167,6 +172,7 @@
     <h1>Slang Half-Life</h1>
     <p>How long does a slang term live? The rise, peak and fade of 77 slang terms, measured from Wiktionary lookups.</p>
     <div class="meta" id="meta">Loading data…</div>
+    <p class="offline" id="offline" role="status" hidden></p>
   </header>
 
   <section class="card" aria-labelledby="search-label">
@@ -466,11 +472,16 @@
     box.append(f1, f2, f3);
   }
 
-  function init(data) {
+  const fmtDate = (iso) => { const [y, m, d] = iso.split("-"); return `${MONTHS[+m - 1]}\u00a0${+d},\u00a0${y}`; };
+
+  function init(data, offline) {
     DATA = data;
+    if (offline) {
+      $("offline").textContent = `Offline: showing the data from ${fmtDate(data.generated)}. It'll update when you're back online.`;
+      $("offline").hidden = false;
+    }
     byKey = new Map(data.terms.map((t) => [t.term.toLowerCase(), t]));
-    const [gy, gm, gd] = data.generated.split("-");
-    $("meta").textContent = `${data.terms.length} terms · data ${fmtMonth(data.first_month)} to ${fmtMonth(data.last_month)} · updated ${MONTHS[+gm - 1]}\u00a0${+gd},\u00a0${gy}`;
+    $("meta").textContent = `${data.terms.length} terms · data ${fmtMonth(data.first_month)} to ${fmtMonth(data.last_month)} · updated ${fmtDate(data.generated)}`;
     const list = $("term-list");
     for (const t of data.terms) list.append(el("option", { value: t.term }));
     for (const name of ["rizz", "skibidi", "yeet", "delulu", "doggo", "situationship"]) {
@@ -496,9 +507,17 @@
   }
 
   fetch("latest.json", { cache: "no-cache" })
-    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(init)
+    .then((r) => {
+      if (!r.ok) throw new Error(r.status);
+      const offline = r.headers.get("X-Slang-Offline") === "1";
+      return r.json().then((data) => init(data, offline));
+    })
     .catch(() => { $("meta").textContent = "Couldn't load the data. Check your connection and reload."; });
+
+  // Offline support: the service worker caches the app and the latest data.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
 })();
 </script>
 </body>

@@ -53,3 +53,23 @@ def test_page_links_manifest_and_every_head_asset():
         assert (DOCS / href).exists(), href
     with Image.open(DOCS / "icons" / "apple-touch-icon.png") as im:
         assert im.size == (180, 180) and im.mode == "RGB"  # iOS shows transparency as black
+
+
+def test_service_worker_caches_only_files_that_exist():
+    sw = (DOCS / "sw.js").read_text()
+    shell = re.search(r"const SHELL = \[(.*?)\];", sw, re.S).group(1)
+    paths = re.findall(r'"([^"]+)"', shell)
+    assert "./" in paths and "index.html" in paths and "manifest.webmanifest" in paths
+    for path in paths:
+        assert not path.startswith("/"), path  # must stay inside /slang-half-life/
+        if path != "./":
+            assert (DOCS / path).exists(), path
+    # every icon the manifest lists is available offline
+    assert {i["src"] for i in _manifest()["icons"]} <= set(paths)
+    assert re.search(r'const VERSION = "v\d+";', sw)
+
+
+def test_page_registers_the_service_worker_relatively():
+    html = (DOCS / "index.html").read_text()
+    assert 'navigator.serviceWorker.register("sw.js")' in html
+    assert "X-Slang-Offline" in html and "X-Slang-Offline" in (DOCS / "sw.js").read_text()
