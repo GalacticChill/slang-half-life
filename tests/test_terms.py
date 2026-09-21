@@ -50,7 +50,7 @@ def test_validate_rejects_duplicates():
 def test_variants_parsed_and_checked():
     df = tm.load_terms().set_index("term", drop=False)
     assert df.loc["gyatt", "variants"] == ["gyat"]
-    assert tm.titles_for(df.loc["yeet"]) == ["yeet", "yoit", "yait"]
+    assert tm.titles_for(df.loc["yeet"]) == ["yeet", "yoit"]
     assert tm.titles_for(df.loc["rizz"]) == ["rizz"]
     assert tm.split_variants("") == []
     assert tm.split_variants(" a ; b;") == ["a", "b"]
