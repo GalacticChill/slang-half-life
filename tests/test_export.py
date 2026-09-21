@@ -41,3 +41,11 @@ def test_build_from_shipped_data_is_valid_json(tmp_path):
     assert not ok_boomer["measured"] and not ok_boomer["peak_observed"]
     assert set(doc["headline"]["shapes"]) == {"flash in the pan", "slow burn", "stuck around"}
     assert all(t["growth"] > 1 for t in doc["rising"])
+
+
+def test_data_changed_ignores_the_generated_date():
+    old = {"generated": "2026-09-21", "last_month": "2026-08", "terms": [{"term": "rizz", "views": [1, 2]}]}
+    assert not export.data_changed(old, {**old, "generated": "2026-09-28"})
+    assert export.data_changed(old, {**old, "last_month": "2026-09"})
+    assert export.data_changed(old, {**old, "terms": [{"term": "rizz", "views": [1, 3]}]})
+    assert export.data_changed(None, old)

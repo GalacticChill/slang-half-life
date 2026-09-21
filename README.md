@@ -209,7 +209,7 @@ README always show the same numbers.
 pytest
 ```
 
-All 71 tests run offline, on every push, across Python 3.10–3.12 (see the badge
+All 79 tests run offline, on every push, across Python 3.10–3.12 (see the badge
 up top). Most check a known answer: half-lives recovered exactly
 from synthetic curves, a hand-worked Kaplan-Meier example, the log-rank test
 matching SciPy's, planted shape types recovered and correctly named, a two-day burst
@@ -225,4 +225,7 @@ re-downloading. The last test runs the full report on the shipped data.
   queried at one request a second. Snapshot: `data/urban_definitions.csv`
   (definition IDs and dates only).
 
-Data runs through August 2026.
+The numbers in this README are a snapshot of data through August 2026. The
+dashboard refreshes itself: every Monday a GitHub Action
+([`refresh.yml`](.github/workflows/refresh.yml)) re-downloads the Wiktionary lookups
+and rebuilds `docs/latest.json`, committing only when the data has actually changed.

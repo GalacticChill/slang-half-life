@@ -113,6 +113,18 @@ def build(res: dict) -> dict:
     }
 
 
+def data_changed(old: dict | None, new: dict) -> bool:
+    """Whether the dashboard's data differs, ignoring the date it was generated.
+
+    The weekly refresh commits only when this is true, so weeks with no new
+    data don't produce empty commits.
+    """
+    if old is None:
+        return True
+    strip = lambda d: {k: v for k, v in d.items() if k != "generated"}  # noqa: E731
+    return strip(old) != strip(new)
+
+
 def write(res: dict, out: str | Path = DEFAULT_OUT) -> Path:
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)

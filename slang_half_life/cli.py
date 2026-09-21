@@ -27,7 +27,8 @@ def _parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--end", help="Last month to collect, YYYY-MM (default: last full month).")
     p.add_argument("--check-terms", action="store_true",
                    help="Check that every term still has a Wiktionary entry, then exit.")
-    p.add_argument("--no-sample", action="store_true", help="Skip the random-sample check.")
+    p.add_argument("--no-sample", action="store_true",
+                   help="Skip the random-sample check (and don't re-collect it with --collect).")
     p.add_argument("--no-plots", action="store_true", help="Don't redraw the charts.")
     p.add_argument("--assets-dir", default=str(DEFAULT_ASSETS), help="Where to write charts.")
     p.add_argument("--export-site", action="store_true",
@@ -35,7 +36,7 @@ def _parse_args(argv=None) -> argparse.Namespace:
     return p.parse_args(argv)
 
 
-def _collect(end: str | None, urban_too: bool) -> None:
+def _collect(end: str | None, urban_too: bool, sample_too: bool = True) -> None:
     from . import collect, normalize, robustness, terms, urban
 
     t = terms.load_terms()
@@ -44,10 +45,11 @@ def _collect(end: str | None, urban_too: bool) -> None:
     collect.save(collect.collect(t, end=end))
     normalize.save_totals(normalize.fetch_totals(end=end))
     normalize.collect_created(t).to_csv(normalize.DEFAULT_CREATED, index=False)
-    exclude = set(t["term"]) | {v for vs in t["variants"] for v in vs}
-    sample = robustness.draw_sample(robustness.category_members(), exclude)
-    print(f"Collecting the random sample ({len(sample)} entries)...")
-    robustness.collect_sample(sample, end=end)
+    if sample_too:
+        exclude = set(t["term"]) | {v for vs in t["variants"] for v in vs}
+        sample = robustness.draw_sample(robustness.category_members(), exclude)
+        print(f"Collecting the random sample ({len(sample)} entries)...")
+        robustness.collect_sample(sample, end=end)
     if urban_too:
         print("Collecting Urban Dictionary definitions (slow)...")
         urban.save(urban.collect(t, progress=lambda n, total, term: print(f"  {n}/{total} {term}")))
@@ -63,7 +65,7 @@ def main(argv=None) -> None:
         print("All terms have Wiktionary entries." if not bad else f"Problems: {bad}")
         return
     if args.collect or args.collect_urban:
-        _collect(args.end, args.collect_urban)
+        _collect(args.end, args.collect_urban, sample_too=not args.no_sample)
 
     res = report.compute(with_sample=not args.no_sample)
     print(report.text(res))

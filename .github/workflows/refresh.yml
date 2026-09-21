@@ -1,0 +1,68 @@
+name: weekly refresh
+
+# Every Monday, re-download the Wiktionary lookups and rebuild the dashboard's
+# data file (docs/latest.json). Only that file is committed: the analysis
+# snapshot in data/ and the README's numbers stay fixed, so the repo still
+# reproduces the README exactly. Weeks with no new data make no commit.
+
+on:
+  schedule:
+    - cron: "0 14 * * 1"  # Mondays 14:00 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Commit even if the data hasn't changed"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Collect fresh lookups and rebuild the dashboard data
+        run: slang-half-life --collect --no-sample --no-plots --export-site
+
+      - name: Did the data change?
+        id: diff
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from slang_half_life.export import data_changed
+          shown = subprocess.run(["git", "show", "HEAD:docs/latest.json"], capture_output=True, text=True)
+          old = json.loads(shown.stdout) if shown.returncode == 0 else None
+          new = json.load(open("docs/latest.json"))
+          changed = data_changed(old, new)
+          print(f"data changed: {changed}; data through {new['last_month']}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"changed={str(changed).lower()}\nlast_month={new['last_month']}\n")
+          PY
+
+      - name: Commit the new dashboard data
+        if: steps.diff.outputs.changed == 'true' || inputs.force
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/latest.json
+          git commit -m "Weekly data refresh (data through ${{ steps.diff.outputs.last_month }})" || echo "nothing to commit"
+          git push
