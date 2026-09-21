@@ -8,6 +8,8 @@ In March 2023, the Wiktionary entry for **rizz** was looked up 120,741 times. Wi
 three months its lookups had halved, and today they sit at about 1% of the peak.
 That's a whole life cycle (rise, peak, fade) in one word.
 
+**[Explore every term on the dashboard →](https://galacticchill.github.io/slang-half-life/)**
+
 This project measures that cycle for 77 slang terms from 2016 onward, using ten
 years of Wiktionary lookups and 10,261 Urban Dictionary definitions, and asks three
 questions:
@@ -181,7 +183,12 @@ the charts in `assets/`. No network needed.
 slang-half-life --collect         # re-download Wiktionary data (a few minutes)
 slang-half-life --collect-urban   # re-download Urban Dictionary dates (~30 minutes)
 slang-half-life --check-terms     # check every term still has a Wiktionary entry
+slang-half-life --export-site     # also write docs/latest.json for the dashboard
 ```
+
+The [dashboard](https://galacticchill.github.io/slang-half-life/) is a single static
+page in `docs/` (no libraries) that reads `docs/latest.json`, so the site and this
+README always show the same numbers.
 
 ## What's inside
 
@@ -194,6 +201,7 @@ slang-half-life --check-terms     # check every term still has a Wiktionary entr
 - `urban.py`: Urban Dictionary definition dates, onset, peak lead, sign test
 - `robustness.py`: the no-ambiguous-words rerun and the random category sample
 - `report.py`, `plots.py`, `cli.py`: the report, the charts, the command line
+- `export.py`: the dashboard's data file, including the "rising now" ranking
 
 ## Tests
 
@@ -201,7 +209,7 @@ slang-half-life --check-terms     # check every term still has a Wiktionary entr
 pytest
 ```
 
-All 68 tests run offline, on every push, across Python 3.10–3.12 (see the badge
+All 71 tests run offline, on every push, across Python 3.10–3.12 (see the badge
 up top). Most check a known answer: half-lives recovered exactly
 from synthetic curves, a hand-worked Kaplan-Meier example, the log-rank test
 matching SciPy's, planted shape types recovered and correctly named, a two-day burst
