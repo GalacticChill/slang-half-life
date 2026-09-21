@@ -1,6 +1,7 @@
 # Slang Half-Life — how long does a slang term live?
 
-[![python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![tests](https://github.com/GalacticChill/slang-half-life/actions/workflows/tests.yml/badge.svg)](https://github.com/GalacticChill/slang-half-life/actions/workflows/tests.yml)
+[![python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 In March 2023, the Wiktionary entry for **rizz** was looked up 120,741 times. Within
@@ -200,7 +201,8 @@ slang-half-life --check-terms     # check every term still has a Wiktionary entr
 pytest
 ```
 
-All 68 tests run offline. Most check a known answer: half-lives recovered exactly
+All 68 tests run offline, on every push, across Python 3.10–3.12 (see the badge
+up top). Most check a known answer: half-lives recovered exactly
 from synthetic curves, a hand-worked Kaplan-Meier example, the log-rank test
 matching SciPy's, planted shape types recovered and correctly named, a two-day burst
 clipped while a real rise is left alone, and a dropped connection resumed without

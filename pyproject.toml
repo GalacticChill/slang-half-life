@@ -7,14 +7,14 @@ name = "slang-half-life"
 version = "0.1.0"
 description = "How long does a slang term live? Measuring the rise, peak, and decay of Gen-Z slang from Wiktionary lookups."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "GalacticChill" }]
 keywords = ["data-science", "time-series", "survival-analysis", "slang", "language", "wiktionary"]
 dependencies = [
     "numpy>=1.24",
     "pandas>=2.0",
-    "scipy>=1.10",
+    "scipy>=1.11",
     "scikit-learn>=1.3",
     "matplotlib>=3.7",
 ]
