@@ -10,6 +10,10 @@ That's a whole life cycle (rise, peak, fade) in one word.
 
 **[Explore every term on the dashboard →](https://galacticchill.github.io/slang-half-life/)**
 
+The dashboard is also an app: on your phone, open it and choose **Add to Home Screen**
+(iPhone: Share → Add to Home Screen; Android: ⋮ → Install app). It opens full-screen,
+works offline, and picks up new data each week.
+
 This project measures that cycle for 77 slang terms from 2016 onward, using ten
 years of Wiktionary lookups and 10,261 Urban Dictionary definitions, and asks three
 questions:
